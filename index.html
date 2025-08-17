@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VinShik Dashboard</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --muted: #6b7280;
+      --text: #0f172a;
+      --brand: #3bbef5;
+      --brand-dark: #111827;
+      --shadow: 0 10px 30px rgba(15,23,42,.08);
+      --card-radius: 16px;
+      --up: #16a34a;
+      --down: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+      transition: all .3s ease;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid #e5e7eb;
+      padding: 24px 16px;
+      position: relative;
+      transition: all .3s ease;
+    }
+
+    .sidebar.collapsed { width: 70px; overflow: hidden; }
+    .app.sidebar-collapsed { grid-template-columns: 70px 1fr; }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 28px;
+      font-weight: 800;
+      margin: 6px 8px 24px;
+    }
+
+    .logo img { height: 36px; width: auto; }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff;
+      color: #111827;
+      font-weight: 500;
+      text-decoration: none;
+      transition: .2s ease;
+    }
+
+    .menu-btn img { width: 20px; height: 20px; }
+    .menu-btn:hover { background: #f3f4f6; }
+    .menu-btn.active { background: #f8fafc; box-shadow: inset 0 0 0 2px #eef2ff; }
+
+    /* Toggle button */
+    .sidebar-toggle {
+      position: absolute;
+      top: 7%;
+      right: -12px;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 32px;
+      border-radius: 4px;
+      border: 1px solid #E1E6EA;
+      background: #FFFFFF;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .sidebar-toggle img { width: 14px; height: 14px; }
+    .sidebar-toggle:hover { background: #f0f0f0; }
+
+    /* Content Area */
+    .content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 26px;
+      padding: 14px 24px;
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .topbar-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    /* Main Section */
+    .main { padding: 26px 28px; }
+
+    .headline {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 6px 0 8px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px,1fr));
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: var(--card-radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric-title { font-weight: 600; font-size: 13px; color: #374151; }
+    .metric-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0 6px;
+    }
+
+    .trend {
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trend.up { color: var(--up); }
+    .trend.down { color: var(--down); }
+
+    .trend-icon { width: 14px; height: 14px; }
+    .value { font-size: 28px; font-weight: 800; margin-top: 4px; }
+
+    .spark img { height: 40px; }
+
+    /* Responsive */
+    @media (max-width: 1200px) { 
+      .cards { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 760px) { 
+      .app { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="app">
+    
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+      <div class="logo">
+        <img src="VinShik.png" alt="Logo" />
+      </div>
+      
+      <nav class="menu">
+        <a class="menu-btn active" href="#"><img src="home.png" alt="Home"/>Home</a>
+        <a class="menu-btn" href="#"><img src="calendar.png" alt="Calendar"/>Calendar</a>
+        <a class="menu-btn" href="#"><img src="map-location.png" alt="Map"/>Map</a>
+        <a class="menu-btn" href="#"><img src="user.png" alt="Clients"/>Clients</a>
+        <a class="menu-btn" href="#"><img src="briefcase.png" alt="Jobs"/>Jobs</a>
+        <a class="menu-btn" href="#"><img src="shield.png" alt="Quotes"/>Quotes</a>
+        <a class="menu-btn" href="#"><img src="notepad.png" alt="Services"/>My Services</a>
+      </nav>
+
+      <!-- Sidebar Toggle -->
+      <button id="toggleBtn" class="sidebar-toggle">
+        <img id="toggleIcon" src="Frame 1171274343.png" alt="toggle">
+      </button>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="content">
+      
+      <!-- Topbar -->
+      <div class="topbar">
+        <img src="Frame 1171274337.png" alt="User 1" class="topbar-img">
+        <img src="Frame 1171274338.png" alt="User 2" class="topbar-img">
+        <img src="Avatar.png" alt="User 3" class="topbar-img">
+      </div>
+
+      <!-- Dashboard Main -->
+      <main class="main">
+        <header>
+          <div class="headline">Welcome back, Julie 👋</div>
+          <div class="sub">Here’s what you need to focus on today</div>
+        </header>
+
+        <!-- Stats Cards -->
+        <section class="cards">
+          <article class="card">
+            <div class="metric-title">Jobs In Progress</div>
+            <div class="metric-row">
+              <span class="trend up"><img src="icon1.png" alt="" class="trend-icon">+12.2%</span>
+              <div class="spark"><img src="Frame 1171274355.png" alt="chart"></div>
+            </div>
+            <div class="value">43.7k</div>
+          </article>
+
+          <article class="card">
+            <div class="metric-title">Jobs In Progress</div>
+            <div class="metric-row">
+              <span class="trend down"><img src="icon2.png" alt="" class="trend-icon">-31.1%</span>
+              <div class="spark"><img src="Frame 1171274357.png" alt="chart"></div>
+            </div>
+            <div class="value">92.3k</div>
+          </article>
+
+          <article class="card">
+            <div class="metric-title">Finished Jobs</div>
+            <div class="metric-row">
+              <span class="trend up"><img src="icon.png" alt="" class="trend-icon">+3.3%</span>
+              <div class="spark"><img src="Sparkline.png" alt="chart"></div>
+            </div>
+            <div class="value">66.3k</div>
+          </article>
+
+          <article class="card">
+            <div class="metric-title">New Leads</div>
+            <div class="metric-row">
+              <span class="trend up"><img src="icon.png" alt="" class="trend-icon">+31.1%</span>
+              <div class="spark"><img src="Frame 1171274358.png" alt="chart"></div>
+            </div>
+            <div class="value">92.3k</div>
+          </article>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById("toggleBtn");
+    const sidebar = document.getElementById("sidebar");
+    const app = document.getElementById("app");
+    const icon = document.getElementById("toggleIcon");
+
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+      app.classList.toggle("sidebar-collapsed");
+
+      icon.src = sidebar.classList.contains("collapsed") 
+        ? "right-arrow.png" 
+        : "left-arrow.png";
+    });
+  </script>
+</body>
+</html>
